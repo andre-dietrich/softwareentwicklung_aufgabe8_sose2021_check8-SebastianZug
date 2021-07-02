@@ -6,7 +6,7 @@ SWE: 5. Juli - 9. Juli 2021 (Mm, BWM, ROB, BAI, BGIP, BBWL, BBL, MGIN)
 
 ## Beiträge der Teammitglieder
 
-[Zur Übersicht](https://raw.githubusercontent.com/<CI_REPOSITORY_OWNER>/<CI_REPOSITORY_NAME>/analytics/Contributions.png)
+[Zur Übersicht](https://raw.githubusercontent.com/Ifi-Softwareentwicklung-SoSe2021/softwareentwicklung_aufgabe8_sose2021_check8-SebastianZug/analytics/Contributions.png)
 
 ## Idee der Übung
 
