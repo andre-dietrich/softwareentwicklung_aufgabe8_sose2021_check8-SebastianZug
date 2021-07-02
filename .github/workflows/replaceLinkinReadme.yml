@@ -1,0 +1,42 @@
+name: Adapt reference in README
+
+on: push
+
+jobs:
+  log-github-event-goodies:
+    name: "Reference generator"
+    runs-on: ubuntu-latest
+    if: github.event.pusher.name == 'github-classroom[bot]'
+    steps:
+      - name: Check out current repository
+        uses: actions/checkout@v2
+        
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - name: Print environment variables
+        run: |
+             echo "CI_REPOSITORY_OWNER=$CI_REPOSITORY_OWNER"
+             echo "CI_REPOSITORY_NAME=$CI_REPOSITORY_NAME"
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Run generation script
+        env: 
+             TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+             pipenv run python .github/workflows/addReferenceLink.py 
+             cat README.md
+          
+      - name: Commit files
+        run: |
+             git config --local user.email "action@github.com"
+             git config --local user.name "GitHub Action"
+             git add README.md
+             git status 
+             git commit -m "Shield generation"
+             
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+             github_token: ${{ secrets.GITHUB_TOKEN }}
+             branch: main

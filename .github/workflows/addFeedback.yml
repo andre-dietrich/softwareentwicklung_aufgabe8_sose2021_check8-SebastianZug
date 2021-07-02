@@ -1,0 +1,58 @@
+name: Add activity table
+
+on: push
+
+jobs:
+  generate_contributions_table:
+    runs-on: ubuntu-latest
+    # this condition avoids automatic adaptations of the README file in the template repository
+    #if: github.event.pusher.name != 'SebastianZug'
+    steps:
+      # Checkout repository
+      - name: Check out current repository
+        uses: actions/checkout@v2
+        with:
+            path: "repository/Versions/repo/"
+            fetch-depth: 0
+
+      - name: Install pipenv
+        run: | 
+             pip install pipenv
+             pipenv --python 3.8
+             pipenv install github2pandas 
+             pipenv install tabulate
+             pipenv install dataframe_image
+             pipenv install matplotlib
+             pipenv install lxml
+             cat Pipfile
+             
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - name: Print environment variables
+        run: |
+             echo "CI_REPOSITORY_OWNER=$CI_REPOSITORY_OWNER"
+             echo "CI_REPOSITORY_NAME=$CI_REPOSITORY_NAME"
+             
+      - name: Run generation script
+        env: 
+             TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+             cp  repository/Versions/repo/.github/workflows/embedTable.py .
+             pipenv run python embedTable.py 
+             mv Contributions.png repository/Versions/repo/Contributions.png
+         
+      - name: Commit files
+        run: |
+             cd repository/Versions/repo
+             git config --local user.email "action@github.com"
+             git config --local user.name "GitHub Action"
+             git add Contributions.png
+             git commit -m "Add new statistics" -a
+             git pull --rebase
+             
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+             github_token: ${{ secrets.GITHUB_TOKEN }}
+             branch: analytics
+             directory: "repository/Versions/repo/"
+             force: true
